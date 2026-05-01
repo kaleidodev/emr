@@ -43,24 +43,37 @@ const labOptions = {
   HbA1c: ["HbA1c (%)"],
 } as const;
 
-const historyMap: Record<string, Point[]> = {
+type HistoryPoint = Point & { flag?: string };
+const historyMap: Record<string, HistoryPoint[]> = {
   "Sodium, Serum (mmol/L)": [
     { date: "09/30/2020", value: 143 },
     { date: "08/15/2020", value: 141.5 },
     { date: "07/30/2020", value: 142 },
     { date: "06/10/2020", value: 139 },
+    { date: "05/30/2019", value: 140 },
+    { date: "03/20/2019", value: 138.5 },
+    { date: "11/05/2018", value: 141 },
+    { date: "08/12/2018", value: 139.5 },
+    { date: "05/22/2018", value: 142 },
+    { date: "02/14/2018", value: 140.5 },
+    { date: "10/30/2017", value: 138 },
+    { date: "06/15/2017", value: 141 },
   ],
   "Potassium, Serum (mmol/L)": [
     { date: "09/30/2020", value: 4.2 },
     { date: "07/30/2020", value: 4 },
     { date: "05/30/2019", value: 3.8 },
     { date: "09/30/2018", value: 4.5 },
+    { date: "05/10/2018", value: 4.1 },
+    { date: "01/15/2018", value: 3.9 },
   ],
   "Glucose, Serum (mg/dL)": [
     { date: "09/30/2020", value: 94 },
     { date: "07/30/2020", value: 98 },
     { date: "05/30/2019", value: 102 },
     { date: "09/30/2018", value: 96 },
+    { date: "05/10/2018", value: 100 },
+    { date: "01/15/2018", value: 91 },
   ],
   "Total Cholesterol (mg/dL)": [
     { date: "09/30/2020", value: 198 },
@@ -75,10 +88,10 @@ const historyMap: Record<string, Point[]> = {
     { date: "09/30/2018", value: 55 },
   ],
   "Triglycerides (mg/dL)": [
-    { date: "09/30/2020", value: 185 },
-    { date: "07/30/2020", value: 170 },
-    { date: "05/30/2019", value: 162 },
-    { date: "09/30/2018", value: 190 },
+    { date: "09/30/2020", value: 185, flag: "H" },
+    { date: "07/30/2020", value: 170, flag: "H" },
+    { date: "05/30/2019", value: 162, flag: "H" },
+    { date: "09/30/2018", value: 190, flag: "H" },
   ],
   "HbA1c (%)": [
     { date: "09/30/2020", value: 5.8 },
@@ -126,6 +139,7 @@ export default function DocumentReview() {
   const [labTest, setLabTest] = useState("");
   const [openMenu, setOpenMenu] = useState<"filter" | "patient" | "more" | "">("");
   const [documentSigned, setDocumentSigned] = useState(false);
+  const [historyRange, setHistoryRange] = useState("all");
 
   const filteredDocs = useMemo(() => {
     const q = keyword.trim().toLowerCase();
@@ -139,7 +153,15 @@ export default function DocumentReview() {
   const rows = filteredDocs.slice(start, start + pageSize);
   const currentDoc = filteredDocs[selectedIndex] ?? filteredDocs[0] ?? docs[0];
   const tests = labType ? labOptions[labType] : [];
-  const history = labTest ? historyMap[labTest] ?? [] : [];
+  const allHistory = labTest ? historyMap[labTest] ?? [] : [];
+  const history = useMemo(() => {
+    if (!historyRange || historyRange === "all") return allHistory;
+    const now = new Date("2020-10-01");
+    const months = historyRange === "3m" ? 3 : historyRange === "6m" ? 6 : historyRange === "1y" ? 12 : 60;
+    const cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - months);
+    return allHistory.filter((h) => new Date(h.date) >= cutoff);
+  }, [allHistory, historyRange]);
+  const minHistoryValue = history.length > 0 ? Math.min(...history.map((h) => h.value)) : 0;
   const maxHistoryValue = history.length > 0 ? Math.max(...history.map((h) => h.value)) : 100;
 
   const handleSignDocument = () => {
@@ -474,66 +496,72 @@ export default function DocumentReview() {
             {showHistory ? (
               !labTest ? (
                 <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
-                  <div className="text-[12px] font-semibold text-[#444]">查看历史检验结果</div>
-                  <div className="text-[10.5px] text-[#888]">
-                    <div className="mb-2">选择上方的检查类型和具体检验项，查看患者的历史检验数据趋势</div>
-                    <div className="text-[10px] text-[#999]">支持查看过去5年的历史记录</div>
-                  </div>
-                  <div className="mt-2 flex gap-2 justify-center">
-                    <div className="text-[9px] bg-[#f5f5f2] rounded px-2 py-1 text-[#666]">选择检查类型</div>
-                    <div className="text-[9px] bg-[#f5f5f2] rounded px-2 py-1 text-[#666]">选择检验项</div>
-                  </div>
+                  <div className="text-[12px] font-semibold text-[#444]">View Past Lab Results</div>
+                  <div className="text-[10.5px] text-[#888]">Select a lab type and test above to view historical trends</div>
                 </div>
               ) : (
                 <div className="flex min-h-0 flex-1">
+                  {/* Line chart */}
                   <div className="flex flex-1 flex-col border-r border-[#e8e8e4] p-3">
-                    <div className="text-[11.5px] font-semibold text-[#444]">{labTest}</div>
-                    <div className="mb-2 text-[10.5px] text-[#888]">患者历史检验趋势</div>
-                    <div className="mb-2 text-[9.5px] text-[#999]">最新结果: <span className="font-semibold text-[#333]">{history[0]?.value || "-"}</span></div>
-                    <div className="flex flex-1 items-end gap-3 pt-4">
-                      {history.map((item) => (
-                        <div key={item.date} className="flex flex-1 flex-col items-center gap-2">
-                          <div
-                            className="w-full rounded-t bg-[#ad273a]"
-                            style={{ height: `${Math.max(24, (item.value / maxHistoryValue) * 100)}px` }}
-                            title={`${item.date}: ${item.value}`}
-                          />
-                          <div className="text-[10px] font-semibold text-[#333]">{item.value}</div>
-                          <div className="text-center text-[9px] text-[#888]">{item.date}</div>
-                        </div>
-                      ))}
+                    <div className="text-[11.5px] font-semibold text-[#333]">{labTest.replace(/ \(.*\)/, "")}</div>
+                    <div className="mb-1 text-[10px] text-[#888]">Last Result: <span className="font-bold text-[#333]">{history[0]?.value}</span>{labTest.match(/\(([^)]+)\)/)?.[0] ?? ""}</div>
+                    <svg viewBox="0 0 300 100" className="flex-1 w-full" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#ad273a" stopOpacity="0.18" />
+                          <stop offset="100%" stopColor="#ad273a" stopOpacity="0.02" />
+                        </linearGradient>
+                      </defs>
+                      {history.length > 1 && (() => {
+                        const pts = [...history].reverse();
+                        const pad = 8; const w = 300; const h = 100;
+                        const xs = pts.map((_, i) => pad + (i / (pts.length - 1)) * (w - pad * 2));
+                        const range = maxHistoryValue - minHistoryValue || 1;
+                        const ys = pts.map((p) => h - pad - ((p.value - minHistoryValue) / range) * (h - pad * 2));
+                        const d = pts.map((_, i) => `${i === 0 ? "M" : "L"}${xs[i]},${ys[i]}`).join(" ");
+                        const area = `${d} L${xs[xs.length - 1]},${h - pad} L${xs[0]},${h - pad} Z`;
+                        return (<>
+                          <path d={area} fill="url(#lineGrad)" />
+                          <path d={d} fill="none" stroke="#ad273a" strokeWidth="1.5" />
+                          {pts.map((p, i) => <circle key={p.date} cx={xs[i]} cy={ys[i]} r="2.5" fill="#ad273a" />)}
+                        </>);
+                      })()}
+                    </svg>
+                    <div className="flex justify-between text-[8.5px] text-[#aaa] px-1">
+                      {[...history].reverse().filter((_, i, a) => i === 0 || i === Math.floor(a.length / 2) || i === a.length - 1).map((p) => <span key={p.date}>{p.date.slice(0, 5)}/{p.date.slice(-2)}</span>)}
                     </div>
                   </div>
+                  {/* Table */}
                   <div className="flex flex-1 flex-col bg-white">
                     <div className="flex items-center justify-between border-b border-[#eee] px-3 py-2">
-                      <div className="text-[11px] font-semibold text-[#555]">历史结果 ({history.length})</div>
-                      <select className="rounded border border-[#d8d8d2] bg-[#fafaf8] px-1.5 py-0.5 text-[10.5px]">
-                        <option>最近5年</option>
-                        <option>最近1年</option>
-                        <option>最近6个月</option>
-                        <option>最近3个月</option>
+                      <div className="text-[11px] font-semibold text-[#333]">{labTest.replace(/ \(.*\)/, "")}</div>
+                      <select value={historyRange} onChange={(e) => setHistoryRange(e.target.value)} className="rounded border border-[#d8d8d2] bg-[#fafaf8] px-1.5 py-0.5 text-[10.5px] outline-none">
+                        <option value="3m">3 months</option>
+                        <option value="6m">6 months</option>
+                        <option value="1y">1 year</option>
+                        <option value="all">All</option>
                       </select>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                       <table className="w-full border-collapse">
                         <thead className="sticky top-0 bg-[#fafaf8]">
                           <tr className="border-b border-[#eee] text-left text-[10px] text-[#888]">
-                            <th className="px-3 py-1 font-medium">日期</th>
-                            <th className="px-3 py-1 font-medium">结果</th>
+                            <th className="px-3 py-1 font-medium">Date</th>
+                            <th className="px-3 py-1 font-medium">Result</th>
+                            <th className="px-3 py-1 font-medium">Flag</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {history.map((item, index) => (
-                            <tr
-                              key={item.date}
-                              className={join("border-b border-[#f5f5f2] text-[11px] text-[#333]", index % 2 === 1 && "bg-[#fafaf8]")}
-                            >
+                          {history.map((item) => (
+                            <tr key={item.date} className="border-b border-[#f5f5f2] text-[11px] text-[#333]">
                               <td className="px-3 py-1.5 text-[10px]">{item.date}</td>
                               <td className="px-3 py-1.5 font-semibold">{item.value}</td>
+                              <td className={join("px-3 py-1.5 font-semibold", !!item.flag && "text-[#d32f2f]")}>{item.flag || ""}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+                      <div className="px-3 py-2 text-[10px] text-[#999]">1–{history.length} of {allHistory.length}</div>
                     </div>
                   </div>
                 </div>
