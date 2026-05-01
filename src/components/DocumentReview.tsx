@@ -144,7 +144,6 @@ export default function DocumentReview() {
 
   const handleSignDocument = () => {
     setDocumentSigned(!documentSigned);
-    alert(`Document ${documentSigned ? "unsigned" : "signed"} successfully!`);
   };
 
   return (
