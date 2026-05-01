@@ -473,20 +473,30 @@ export default function DocumentReview() {
             </div>
             {showHistory ? (
               !labTest ? (
-                <div className="flex flex-1 items-center justify-center text-xs text-[#999]">
-                  Select a lab type above to view patient's historical results
+                <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+                  <div className="text-[12px] font-semibold text-[#444]">查看历史检验结果</div>
+                  <div className="text-[10.5px] text-[#888]">
+                    <div className="mb-2">选择上方的检查类型和具体检验项，查看患者的历史检验数据趋势</div>
+                    <div className="text-[10px] text-[#999]">支持查看过去5年的历史记录</div>
+                  </div>
+                  <div className="mt-2 flex gap-2 justify-center">
+                    <div className="text-[9px] bg-[#f5f5f2] rounded px-2 py-1 text-[#666]">选择检查类型</div>
+                    <div className="text-[9px] bg-[#f5f5f2] rounded px-2 py-1 text-[#666]">选择检验项</div>
+                  </div>
                 </div>
               ) : (
                 <div className="flex min-h-0 flex-1">
                   <div className="flex flex-1 flex-col border-r border-[#e8e8e4] p-3">
-                    <div className="text-[11.5px] text-[#444]">{labTest}</div>
-                    <div className="mb-2 text-[10.5px] text-[#888]">Result trend for selected patient</div>
+                    <div className="text-[11.5px] font-semibold text-[#444]">{labTest}</div>
+                    <div className="mb-2 text-[10.5px] text-[#888]">患者历史检验趋势</div>
+                    <div className="mb-2 text-[9.5px] text-[#999]">最新结果: <span className="font-semibold text-[#333]">{history[0]?.value || "-"}</span></div>
                     <div className="flex flex-1 items-end gap-3 pt-4">
                       {history.map((item) => (
                         <div key={item.date} className="flex flex-1 flex-col items-center gap-2">
                           <div
                             className="w-full rounded-t bg-[#ad273a]"
                             style={{ height: `${Math.max(24, (item.value / maxHistoryValue) * 100)}px` }}
+                            title={`${item.date}: ${item.value}`}
                           />
                           <div className="text-[10px] font-semibold text-[#333]">{item.value}</div>
                           <div className="text-center text-[9px] text-[#888]">{item.date}</div>
@@ -496,17 +506,20 @@ export default function DocumentReview() {
                   </div>
                   <div className="flex flex-1 flex-col bg-white">
                     <div className="flex items-center justify-between border-b border-[#eee] px-3 py-2">
-                      <div className="text-[11px] text-[#555]">Historical Results</div>
+                      <div className="text-[11px] font-semibold text-[#555]">历史结果 ({history.length})</div>
                       <select className="rounded border border-[#d8d8d2] bg-[#fafaf8] px-1.5 py-0.5 text-[10.5px]">
-                        <option>Last 5 years</option>
+                        <option>最近5年</option>
+                        <option>最近1年</option>
+                        <option>最近6个月</option>
+                        <option>最近3个月</option>
                       </select>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                       <table className="w-full border-collapse">
                         <thead className="sticky top-0 bg-[#fafaf8]">
                           <tr className="border-b border-[#eee] text-left text-[10px] text-[#888]">
-                            <th className="px-3 py-1 font-medium">Date</th>
-                            <th className="px-3 py-1 font-medium">Value</th>
+                            <th className="px-3 py-1 font-medium">日期</th>
+                            <th className="px-3 py-1 font-medium">结果</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -515,8 +528,8 @@ export default function DocumentReview() {
                               key={item.date}
                               className={join("border-b border-[#f5f5f2] text-[11px] text-[#333]", index % 2 === 1 && "bg-[#fafaf8]")}
                             >
-                              <td className="px-3 py-1.5">{item.date}</td>
-                              <td className="px-3 py-1.5">{item.value}</td>
+                              <td className="px-3 py-1.5 text-[10px]">{item.date}</td>
+                              <td className="px-3 py-1.5 font-semibold">{item.value}</td>
                             </tr>
                           ))}
                         </tbody>
