@@ -169,35 +169,39 @@ export default function DocumentReview() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f0efe9] text-[#2d2d2d]">
-      <nav className="flex h-[52px] items-center gap-3 border-b border-[#e2e2dc] bg-white px-4">
-        <button type="button" className="text-[#555]">
-          <Menu size={18} />
-        </button>
-        <div className="text-xl font-bold tracking-tight text-[#ad273a]">Canopy</div>
-        <div className="text-xl text-[#c8c8c4]">|</div>
-        <div className="text-sm text-[#444]">Visits</div>
-        <div className="mx-auto flex w-full max-w-[420px] items-center rounded-md border border-[#d8d8d2] bg-[#fafaf8] px-3">
-          <input className="h-8 w-full bg-transparent text-sm outline-none" placeholder="Search for a patient" />
-          <Search size={14} className="text-[#888]" />
+    <main className="min-h-screen overflow-x-hidden bg-[#f0efe9] text-[#2d2d2d]">
+      <nav className="flex min-h-[52px] flex-wrap items-center gap-3 border-b border-[#e2e2dc] bg-white px-3 py-3 sm:px-4 sm:py-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <button type="button" className="text-[#555]">
+            <Menu size={18} />
+          </button>
+          <div className="text-xl font-bold tracking-tight text-[#ad273a]">Canopy</div>
+          <div className="hidden text-xl text-[#c8c8c4] sm:block">|</div>
+          <div className="hidden text-sm text-[#444] sm:block">Visits</div>
         </div>
-        <button type="button" className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full bg-[#f0efea] text-[#555]">
-          <Bell size={16} />
-          <span className="absolute -top-1 -right-1 min-w-4 rounded-full bg-[#e8372d] px-1 text-[9px] leading-4 font-bold text-white">1</span>
-        </button>
-        <button type="button" className="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-[#f0efea] text-xs font-semibold text-[#444]">
-          10
-        </button>
-        <button type="button" className="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-[#2d6fa8] text-xs font-bold text-white">
-          JD
-        </button>
+        <div className="order-3 flex w-full items-center rounded-md border border-[#d8d8d2] bg-[#fafaf8] px-3 sm:order-none sm:ml-auto sm:max-w-[420px] lg:w-full">
+          <input className="h-8 w-full min-w-0 bg-transparent text-sm outline-none" placeholder="Search for a patient" />
+          <Search size={14} className="shrink-0 text-[#888]" />
+        </div>
+        <div className="ml-auto flex items-center gap-2 sm:ml-0">
+          <button type="button" className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full bg-[#f0efea] text-[#555]">
+            <Bell size={16} />
+            <span className="absolute -top-1 -right-1 min-w-4 rounded-full bg-[#e8372d] px-1 text-[9px] leading-4 font-bold text-white">1</span>
+          </button>
+          <button type="button" className="hidden h-8.5 w-8.5 items-center justify-center rounded-full bg-[#f0efea] text-xs font-semibold text-[#444] sm:flex">
+            10
+          </button>
+          <button type="button" className="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-[#2d6fa8] text-xs font-bold text-white">
+            JD
+          </button>
+        </div>
       </nav>
 
-      <div className="flex h-[calc(100vh-52px)] min-h-[720px]">
-        <section className="flex w-[580px] min-w-[480px] flex-col border-r border-[#e2e2dc] bg-white">
-          <div className="border-b border-[#f0f0ec] px-[18px] py-[14px] text-lg font-semibold text-[#1a1a1a]">Documents Review</div>
-          <div className="flex items-center gap-2 border-b border-[#f0f0ec] px-[18px] py-[10px]">
-            <div className="flex flex-1 items-center rounded border border-[#d8d8d2] bg-[#fafaf8] px-2.5">
+      <div className="flex min-h-[calc(100vh-52px)] flex-col lg:flex-row">
+        <section className="flex w-full min-w-0 flex-col border-b border-[#e2e2dc] bg-white lg:w-[420px] lg:border-r lg:border-b-0 xl:w-[580px]">
+          <div className="border-b border-[#f0f0ec] px-4 py-[14px] text-lg font-semibold text-[#1a1a1a] sm:px-[18px]">Documents Review</div>
+          <div className="flex flex-wrap items-center gap-2 border-b border-[#f0f0ec] px-4 py-[10px] sm:px-[18px]">
+            <div className="flex min-w-0 flex-1 basis-full items-center rounded border border-[#d8d8d2] bg-[#fafaf8] px-2.5 sm:basis-auto">
               <input
                 value={keyword}
                 onChange={(e) => {
@@ -205,7 +209,7 @@ export default function DocumentReview() {
                   setPage(1);
                   setSelectedIndex(0);
                 }}
-                className="h-8 w-full bg-transparent text-xs outline-none"
+                className="h-8 w-full min-w-0 bg-transparent text-xs outline-none"
                 placeholder="Search for a document"
               />
               <Search size={12} className="text-[#999]" />
@@ -220,7 +224,7 @@ export default function DocumentReview() {
                 FILTER
               </button>
               {openMenu === "filter" ? (
-                <div className="absolute right-0 z-20 mt-1 w-40 rounded border border-[#d8d8d2] bg-white py-1 text-xs shadow-lg">
+                <div className="absolute right-0 z-20 mt-1 w-40 max-w-[calc(100vw-1rem)] overflow-auto rounded border border-[#d8d8d2] bg-white py-1 text-xs shadow-lg">
                   {filterOptions.map((item) => (
                     <button
                       key={item}
@@ -238,8 +242,8 @@ export default function DocumentReview() {
               REFRESH
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto">
-            <table className="w-full table-fixed border-collapse">
+          <div className="flex-1 overflow-y-auto overflow-x-auto">
+            <table className="min-w-[560px] w-full table-fixed border-collapse">
               <colgroup>
                 <col className="w-[90px]" />
                 <col className="w-[150px]" />
@@ -273,11 +277,11 @@ export default function DocumentReview() {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between border-t border-[#e8e8e4] px-[18px] py-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8e8e4] px-4 py-2 sm:px-[18px]">
             <button type="button" className="rounded border border-[#d8d8d2] bg-white px-3.5 py-1.5 text-xs text-[#444]">
               Back to Table
             </button>
-            <div className="flex items-center gap-2 text-xs text-[#777]">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[#777] sm:justify-end">
               <span>{filteredDocs.length ? `${start + 1}-${Math.min(start + pageSize, filteredDocs.length)} of ${filteredDocs.length}` : "0-0 of 0"}</span>
               <button
                 type="button"
@@ -300,21 +304,21 @@ export default function DocumentReview() {
         </section>
 
         <section className="flex min-w-0 flex-1 flex-col bg-white">
-          <div className="border-b border-[#f0f0ec] px-[18px] py-[13px]">
+          <div className="border-b border-[#f0f0ec] px-4 py-[13px] sm:px-[18px]">
             <div className="mb-0.5 text-[11px] text-[#888]">{currentDoc.type}</div>
-            <div className="mb-[11px] text-base font-semibold text-[#1a1a1a]">{currentDoc.title}</div>
-            <div className="flex items-center gap-2">
+            <div className="mb-[11px] break-words text-base font-semibold text-[#1a1a1a]">{currentDoc.title}</div>
+            <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setOpenMenu((v) => (v === "patient" ? "" : "patient"))}
-                  className="flex items-center gap-1 rounded border border-[#d8d8d2] bg-[#fafaf8] px-2.5 py-1.5 text-sm text-[#333]"
+                  className="flex max-w-full items-center gap-1 rounded border border-[#d8d8d2] bg-[#fafaf8] px-2.5 py-1.5 text-sm text-[#333]"
                 >
                   {currentDoc.patient}
                   <ChevronDown size={12} />
                 </button>
                 {openMenu === "patient" ? (
-                  <div className="absolute left-0 z-20 mt-1 w-48 rounded border border-[#d8d8d2] bg-white py-1 text-xs shadow-lg">
+                  <div className="absolute left-0 z-20 mt-1 w-48 max-w-[calc(100vw-1rem)] overflow-auto rounded border border-[#d8d8d2] bg-white py-1 text-xs shadow-lg">
                     {patientOptions.map((item) => (
                       <button
                         key={item}
@@ -338,7 +342,7 @@ export default function DocumentReview() {
                   <ChevronDown size={12} />
                 </button>
                 {openMenu === "more" ? (
-                  <div className="absolute left-0 z-20 mt-1 w-44 rounded border border-[#d8d8d2] bg-white py-1 text-xs shadow-lg">
+                  <div className="absolute left-0 z-20 mt-1 w-44 max-w-[calc(100vw-1rem)] overflow-auto rounded border border-[#d8d8d2] bg-white py-1 text-xs shadow-lg">
                     {moreOptions.map((item) => (
                       <button
                         key={item}
@@ -355,7 +359,7 @@ export default function DocumentReview() {
               <button
                 type="button"
                 onClick={handleSignDocument}
-                className={`rounded px-4 py-1.5 text-[13px] font-bold ${
+                className={`w-full rounded px-4 py-1.5 text-[13px] font-bold sm:w-auto ${
                   documentSigned ? "bg-[#4caf50] text-white" : "bg-[#ad273a] text-white"
                 }`}
               >
@@ -364,14 +368,14 @@ export default function DocumentReview() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-[#f0efea] p-4">
-            <div className="rounded-[3px] border border-[#e0e0d8] bg-white px-[18px] py-4 text-[10.5px] leading-6 text-[#2a2a2a]">
+          <div className="flex-1 overflow-y-auto bg-[#f0efea] p-3 sm:p-4">
+            <div className="overflow-x-auto rounded-[3px] border border-[#e0e0d8] bg-white px-4 py-4 text-[10.5px] leading-6 text-[#2a2a2a] sm:px-[18px]">
               <div className="mb-2 text-right text-[9.5px] text-[#999]">[12/2/2021][Page 1 of 5]</div>
               <div className="mb-1 text-[11px] font-bold">Quest - Lab - General Lab</div>
               <hr className="my-2 border-[#e8e8e4]" />
 
               <div className="mb-1 text-[10.5px] font-bold">Patient Information:</div>
-              <div className="mb-2 grid grid-cols-4 gap-x-3 gap-y-1 text-[10px]">
+              <div className="mb-2 grid grid-cols-1 gap-x-3 gap-y-1 text-[10px] sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <span className="font-semibold">Name:</span> {patientInfo.name}
                 </div>
@@ -384,8 +388,8 @@ export default function DocumentReview() {
                 <div>
                   <span className="font-semibold">DOB:</span> {patientInfo.dob}
                 </div>
-                <div className="col-span-2 text-[9.5px] text-[#555]">
-                  <span className="font-semibold">Address:</span> {patientInfo.address}
+                <div className="text-[9.5px] text-[#555] sm:col-span-2 lg:col-span-2">
+                  <span className="font-semibold">Address:</span> <span className="break-words whitespace-normal">{patientInfo.address}</span>
                 </div>
                 <div>
                   <span className="font-semibold">Phone #:</span> {patientInfo.phone}
@@ -396,7 +400,7 @@ export default function DocumentReview() {
               </div>
               <hr className="my-2 border-[#e8e8e4]" />
 
-              <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
+              <div className="grid grid-cols-1 gap-x-3 gap-y-1 text-[10px] sm:grid-cols-2">
                 <div>
                   <span className="font-semibold">Specimen #:</span> {patientInfo.specimenNum}
                 </div>
@@ -421,7 +425,7 @@ export default function DocumentReview() {
               </div>
               <hr className="my-2 border-[#e8e8e4]" />
 
-              <table className="w-full border-collapse">
+              <table className="min-w-[640px] w-full border-collapse">
                 <thead>
                   <tr className="border-b border-[#e0e0d8] text-left text-[10px] text-[#888]">
                     <th className="px-1.5 py-1 font-medium">Test Name</th>
