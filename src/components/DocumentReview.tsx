@@ -455,8 +455,8 @@ export default function DocumentReview() {
           </div>
 
           <div className="flex min-h-0 flex-1 flex-col border-t border-[#e8e8e4] bg-white">
-            <div className="flex items-center justify-between border-b border-[#f0f0ec] px-4 py-[9px]">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#f0f0ec] px-4 py-[9px]">
+              <div className="flex min-w-0 flex-wrap items-center gap-3">
                 <div className="text-sm font-semibold text-[#ad273a]">||||</div>
                 <select
                   value={labType}
@@ -465,7 +465,7 @@ export default function DocumentReview() {
                     setLabType(value);
                     setLabTest("");
                   }}
-                  className="rounded border border-[#d8d8d2] bg-[#fafaf8] px-2 py-1 text-xs outline-none"
+                  className="max-w-full rounded border border-[#d8d8d2] bg-[#fafaf8] px-2 py-1 text-xs outline-none"
                 >
                   <option value="">Select Lab Type</option>
                   {Object.keys(labOptions).map((item) => (
@@ -478,7 +478,7 @@ export default function DocumentReview() {
                   value={labTest}
                   onChange={(e) => setLabTest(e.target.value)}
                   disabled={!labType}
-                  className="rounded border border-[#d8d8d2] bg-[#fafaf8] px-2 py-1 text-xs outline-none disabled:opacity-50"
+                  className="max-w-full rounded border border-[#d8d8d2] bg-[#fafaf8] px-2 py-1 text-xs outline-none disabled:opacity-50"
                 >
                   <option value="">Select Test</option>
                   {tests.map((item) => (
@@ -504,12 +504,11 @@ export default function DocumentReview() {
                   <div className="text-[10.5px] text-[#888]">Select a lab type and test above to view historical trends</div>
                 </div>
               ) : (
-                <div className="flex min-h-0 flex-1">
-                  {/* Line chart */}
-                  <div className="flex flex-1 flex-col border-r border-[#e8e8e4] p-3">
+                <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+                  <div className="flex min-w-0 flex-1 flex-col border-b border-[#e8e8e4] p-3 lg:border-r lg:border-b-0">
                     <div className="text-[11.5px] font-semibold text-[#333]">{labTest.replace(/ \(.*\)/, "")}</div>
                     <div className="mb-1 text-[10px] text-[#888]">Last Result: <span className="font-bold text-[#333]">{history[0]?.value}</span>{labTest.match(/\(([^)]+)\)/)?.[0] ?? ""}</div>
-                    <svg viewBox="0 0 300 100" className="flex-1 w-full" preserveAspectRatio="none">
+                    <svg viewBox="0 0 300 100" className="h-40 w-full flex-1 sm:h-48" preserveAspectRatio="none" role="img" aria-label={`${labTest.replace(/ \(.*\)/, "")} trend chart`}>
                       <defs>
                         <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#ad273a" stopOpacity="0.18" />
@@ -535,19 +534,18 @@ export default function DocumentReview() {
                       {[...history].reverse().filter((_, i, a) => i === 0 || i === Math.floor(a.length / 2) || i === a.length - 1).map((p) => <span key={p.date}>{p.date.slice(0, 5)}/{p.date.slice(-2)}</span>)}
                     </div>
                   </div>
-                  {/* Table */}
-                  <div className="flex flex-1 flex-col bg-white">
-                    <div className="flex items-center justify-between border-b border-[#eee] px-3 py-2">
+                  <div className="flex min-w-0 flex-1 flex-col bg-white">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#eee] px-3 py-2">
                       <div className="text-[11px] font-semibold text-[#333]">{labTest.replace(/ \(.*\)/, "")}</div>
-                      <select value={historyRange} onChange={(e) => setHistoryRange(e.target.value)} className="rounded border border-[#d8d8d2] bg-[#fafaf8] px-1.5 py-0.5 text-[10.5px] outline-none">
+                      <select value={historyRange} onChange={(e) => setHistoryRange(e.target.value)} className="max-w-full rounded border border-[#d8d8d2] bg-[#fafaf8] px-1.5 py-0.5 text-[10.5px] outline-none">
                         <option value="3m">3 months</option>
                         <option value="6m">6 months</option>
                         <option value="1y">1 year</option>
                         <option value="all">All</option>
                       </select>
                     </div>
-                    <div className="flex-1 overflow-y-auto">
-                      <table className="w-full border-collapse">
+                    <div className="flex-1 overflow-y-auto overflow-x-auto">
+                      <table className="min-w-[320px] w-full border-collapse">
                         <thead className="sticky top-0 bg-[#fafaf8]">
                           <tr className="border-b border-[#eee] text-left text-[10px] text-[#888]">
                             <th className="px-3 py-1 font-medium">Date</th>
